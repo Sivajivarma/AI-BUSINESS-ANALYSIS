@@ -1,0 +1,501 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Upload Dataset | AI Business Analytics</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="upload-page">
+
+    <!-- Header -->
+
+    <header class="upload-header">
+
+        <div>
+            <div class="brand-name">
+                AI Business Analytics
+            </div>
+
+            <p>
+                Intelligent data analysis for better business decisions
+            </p>
+        </div>
+
+        <a href="{% url 'dataset_history' %}"
+           class="header-link">
+            View Datasets
+        </a>
+
+    </header>
+
+
+    <!-- Main Content -->
+
+    <main class="upload-main">
+
+        <div class="upload-intro">
+
+            <span class="eyebrow">
+                DATA MANAGEMENT
+            </span>
+
+            <h1>
+                Upload your business dataset
+            </h1>
+
+            <p>
+                Upload a CSV file and let the platform
+                validate, analyze and visualize your business data.
+            </p>
+
+        </div>
+
+
+        <!-- Upload Card -->
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              action="{% url 'upload_dataset' %}"
+              id="uploadForm">
+
+            {% csrf_token %}
+
+            <div class="upload-card">
+
+
+                <!-- Drop Zone -->
+
+                <div class="drop-zone"
+                     id="dropZone">
+
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+
+                    <h2>
+                        Drop your CSV file here
+                    </h2>
+
+                    <p>
+                        or choose a file from your computer
+                    </p>
+
+
+                    <label for="dataset"
+                           class="choose-file-button">
+
+                        Choose CSV File
+
+                    </label>
+
+                    <input
+                        type="file"
+                        name="dataset"
+                        id="dataset"
+                        accept=".csv"
+                        hidden
+                    >
+
+                    <div class="file-support">
+
+                        CSV files only
+
+                        <span>•</span>
+
+                        Ready for analysis
+
+                    </div>
+
+                </div>
+
+
+                <!-- Selected File -->
+
+                <div class="selected-file"
+                     id="selectedFile">
+
+                    <div class="selected-file-icon">
+                        CSV
+                    </div>
+
+                    <div class="selected-file-info">
+
+                        <strong id="fileName">
+                            No file selected
+                        </strong>
+
+                        <span id="fileSize">
+                            Choose a CSV file to continue
+                        </span>
+
+                    </div>
+
+                    <div class="file-check"
+                         id="fileCheck">
+                        ✓
+                    </div>
+
+                </div>
+
+
+                <!-- Validation -->
+
+                <div class="validation-panel">
+
+                    <div class="validation-header">
+
+                        <div>
+
+                            <span class="validation-title">
+                                Dataset readiness
+                            </span>
+
+                            <p id="validationMessage">
+                                Select a CSV file to begin validation.
+                            </p>
+
+                        </div>
+
+                        <span class="validation-badge"
+                              id="validationBadge">
+                            Waiting
+                        </span>
+
+                    </div>
+
+
+                    <div class="validation-items">
+
+                        <div class="validation-item"
+                             id="fileValidation">
+
+                            <span class="validation-dot">
+                                •
+                            </span>
+
+                            <span>
+                                File selected
+                            </span>
+
+                        </div>
+
+
+                        <div class="validation-item"
+                             id="typeValidation">
+
+                            <span class="validation-dot">
+                                •
+                            </span>
+
+                            <span>
+                                CSV format
+                            </span>
+
+                        </div>
+
+
+                        <div class="validation-item"
+                             id="dataValidation">
+
+                            <span class="validation-dot">
+                                •
+                            </span>
+
+                            <span>
+                                Ready for dataset validation
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Submit -->
+
+                <button
+                    type="submit"
+                    id="uploadButton"
+                    class="upload-submit"
+                    disabled>
+
+                    Upload & Validate Dataset
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- Bottom information -->
+
+        <div class="upload-info-grid">
+
+            <div class="info-card">
+
+                <span class="info-icon">
+                    ✓
+                </span>
+
+                <div>
+
+                    <strong>
+                        Automatic validation
+                    </strong>
+
+                    <p>
+                        Business columns and data quality
+                        are checked before storage.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span class="info-icon">
+                    ◈
+                </span>
+
+                <div>
+
+                    <strong>
+                        MongoDB storage
+                    </strong>
+
+                    <p>
+                        Valid datasets are securely stored
+                        for analytics and AI processing.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span class="info-icon">
+                    ↗
+                </span>
+
+                <div>
+
+                    <strong>
+                        Instant analytics
+                    </strong>
+
+                    <p>
+                        Generate dashboards, insights and
+                        recommendations from your data.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const fileInput = document.getElementById("dataset");
+
+const dropZone = document.getElementById("dropZone");
+
+const selectedFile = document.getElementById("selectedFile");
+
+const fileName = document.getElementById("fileName");
+
+const fileSize = document.getElementById("fileSize");
+
+const fileCheck = document.getElementById("fileCheck");
+
+const uploadButton = document.getElementById("uploadButton");
+
+const validationBadge =
+    document.getElementById("validationBadge");
+
+const validationMessage =
+    document.getElementById("validationMessage");
+
+const fileValidation =
+    document.getElementById("fileValidation");
+
+const typeValidation =
+    document.getElementById("typeValidation");
+
+const dataValidation =
+    document.getElementById("dataValidation");
+
+
+function updateFile(file) {
+
+    if (!file) {
+        return;
+    }
+
+
+    const isCSV =
+        file.name.toLowerCase().endsWith(".csv");
+
+
+    if (!isCSV) {
+
+        fileName.textContent =
+            file.name;
+
+        fileSize.textContent =
+            "Invalid file type";
+
+        selectedFile.classList.add("invalid");
+
+        fileCheck.textContent = "✕";
+
+        uploadButton.disabled = true;
+
+        validationBadge.textContent =
+            "Invalid";
+
+        validationBadge.className =
+            "validation-badge invalid";
+
+        validationMessage.textContent =
+            "Please select a CSV file.";
+
+        return;
+    }
+
+
+    const sizeKB =
+        Math.round(file.size / 1024);
+
+
+    fileName.textContent =
+        file.name;
+
+    fileSize.textContent =
+        sizeKB + " KB • CSV file";
+
+
+    selectedFile.classList.add("visible");
+
+    selectedFile.classList.remove("invalid");
+
+    fileCheck.textContent = "✓";
+
+
+    uploadButton.disabled = false;
+
+
+    validationBadge.textContent =
+        "Ready";
+
+    validationBadge.className =
+        "validation-badge ready";
+
+
+    validationMessage.textContent =
+        "Your file is ready to be uploaded and validated.";
+
+
+    fileValidation.classList.add("complete");
+
+    typeValidation.classList.add("complete");
+
+    dataValidation.classList.add("complete");
+
+}
+
+
+fileInput.addEventListener(
+    "change",
+    function () {
+
+        const file =
+            this.files[0];
+
+        updateFile(file);
+
+    }
+);
+
+
+dropZone.addEventListener(
+    "dragover",
+    function (event) {
+
+        event.preventDefault();
+
+        dropZone.classList.add("dragging");
+
+    }
+);
+
+
+dropZone.addEventListener(
+    "dragleave",
+    function () {
+
+        dropZone.classList.remove("dragging");
+
+    }
+);
+
+
+dropZone.addEventListener(
+    "drop",
+    function (event) {
+
+        event.preventDefault();
+
+        dropZone.classList.remove("dragging");
+
+
+        const file =
+            event.dataTransfer.files[0];
+
+
+        if (!file) {
+            return;
+        }
+
+
+        fileInput.files =
+            event.dataTransfer.files;
+
+
+        updateFile(file);
+
+    }
+);
+
+</script>
+
+</body>
+</html>

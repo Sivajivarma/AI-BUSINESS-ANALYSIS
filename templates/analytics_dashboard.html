@@ -1,0 +1,1101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Business Analytics Dashboard</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <style>
+        .recommendation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    border-left: 4px solid #4f46e5;
+}
+
+.recommendation-icon {
+    font-size: 20px;
+}
+
+.recommendation-item p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f6f8;
+
+            color: #222;
+        }
+
+
+        .container {
+            width: 92%;
+
+            max-width: 1300px;
+
+            margin: 30px auto;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 30px;
+        }
+
+
+        .header p {
+
+            margin-top: 8px;
+
+            color: #666;
+        }
+
+
+        .back-button {
+
+            text-decoration: none;
+
+            padding: 10px 16px;
+
+            background: #222;
+
+            color: white;
+
+            border-radius: 6px;
+        }
+
+
+        /* =========================
+           KPI CARDS
+        ========================= */
+
+        .kpi-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .kpi-card {
+
+            background: white;
+
+            padding: 22px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .kpi-title {
+
+            font-size: 14px;
+
+            color: #777;
+
+            margin-bottom: 10px;
+        }
+
+
+        .kpi-value {
+
+            font-size: 25px;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           CHART GRID
+        ========================= */
+
+        .charts {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .chart-card {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .chart-card h2 {
+
+            font-size: 18px;
+
+            margin-top: 0;
+
+            margin-bottom: 20px;
+        }
+
+
+        .chart-container {
+
+            position: relative;
+
+            width: 100%;
+
+            height: 350px;
+        }
+
+
+        /* =========================
+           INSIGHTS
+        ========================= */
+
+        .insights-card {
+
+            background: white;
+
+            padding: 25px;
+
+            margin-top: 20px;
+
+            margin-bottom: 30px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .insights-card h2 {
+
+            margin-top: 0;
+
+            font-size: 20px;
+        }
+
+
+        .insights-card ul {
+
+            margin: 15px 0 0;
+
+            padding-left: 25px;
+        }
+
+
+        .insights-card li {
+
+            margin-bottom: 12px;
+
+            line-height: 1.6;
+
+            color: #444;
+        }
+
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error {
+
+            background: #ffe5e5;
+
+            color: #b00020;
+
+            padding: 15px;
+
+            border-radius: 8px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .kpi-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .charts {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .kpi-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .header {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Business Analytics Dashboard
+            </h1>
+
+            <p>
+                AI-ready business intelligence from your dataset
+            </p>
+         <a
+    href="{% url 'ai_business_analyst' dataset_id %}"
+    class="analytics-button"
+>
+    ✦ Ask AI Business Analyst
+</a>   
+
+        </div>
+
+
+        <a
+            href="{% url 'dataset_history' %}"
+            class="back-button"
+        >
+            ← Back to Datasets
+        </a>
+
+    </div>
+
+
+    {% if not result.success %}
+
+
+        <!-- ERROR -->
+
+        <div class="error">
+
+            {{ result.error }}
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- =========================
+             KPI CARDS
+        ========================= -->
+
+        <div class="kpi-grid">
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Total Sales
+                </div>
+
+                <div class="kpi-value">
+
+                    ₹{{ result.total_sales|floatformat:2 }}
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Total Profit
+                </div>
+
+                <div class="kpi-value">
+
+                    ₹{{ result.total_profit|floatformat:2 }}
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Total Quantity
+                </div>
+
+                <div class="kpi-value">
+
+                    {{ result.total_quantity|floatformat:0 }}
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Average Sale
+                </div>
+
+                <div class="kpi-value">
+
+                    ₹{{ result.average_sale|floatformat:2 }}
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Profit Margin
+                </div>
+
+                <div class="kpi-value">
+
+                    {{ result.profit_margin|floatformat:2 }}%
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Top Product
+                </div>
+
+                <div class="kpi-value">
+
+                    {{ result.top_product|default:"N/A" }}
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Top Region
+                </div>
+
+                <div class="kpi-value">
+
+                    {{ result.top_region|default:"N/A" }}
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-title">
+                    Rows Analyzed
+                </div>
+
+                <div class="kpi-value">
+
+                    {{ result.rows_analyzed }}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =========================
+             PRODUCT + REGION
+        ========================= -->
+
+        <div class="charts">
+
+
+            <div class="chart-card">
+
+                <h2>
+                    Sales by Product
+                </h2>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="productChart"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="chart-card">
+
+                <h2>
+                    Sales by Region
+                </h2>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="regionChart"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =========================
+             SALES + PROFIT TREND
+        ========================= -->
+
+        <div class="charts">
+
+
+            <div class="chart-card">
+
+                <h2>
+                    Sales Trend
+                </h2>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="salesTrendChart"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="chart-card">
+
+                <h2>
+                    Profit Trend
+                </h2>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="profitTrendChart"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =========================
+             AUTOMATIC INSIGHTS
+        ========================= -->
+
+        <div class="insights-card">
+
+
+            <h2>
+                💡 Automatic Business Insights
+            </h2>
+
+
+            {% if result.insights %}
+
+
+                <ul>
+
+
+                    {% for insight in result.insights %}
+
+
+                        <li>
+
+                            {{ insight }}
+
+                        </li>
+
+
+                    {% endfor %}
+
+
+                </ul>
+
+
+            {% else %}
+
+
+                <p>
+
+                    No automatic insights available.
+
+                </p>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+<div class="insights-card">
+
+    <h2>💡 Business Recommendations</h2>
+
+    {% if result.recommendations %}
+
+        <div class="recommendation-list">
+
+            {% for recommendation in result.recommendations %}
+
+                <div class="recommendation-item">
+
+                    <span class="recommendation-icon">💡</span>
+
+                    <p>{{ recommendation }}</p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>No recommendations available for this dataset.</p>
+
+    {% endif %}
+
+</div>
+
+
+
+<script>
+
+
+    /*
+    ========================================
+    GET DATA FROM DJANGO
+    ========================================
+    */
+
+
+    const productLabels = JSON.parse(
+        '{{ result.product_labels|escapejs }}'
+    );
+
+
+    const productValues = JSON.parse(
+        '{{ result.product_values|escapejs }}'
+    );
+
+
+    const regionLabels = JSON.parse(
+        '{{ result.region_labels|escapejs }}'
+    );
+
+
+    const regionValues = JSON.parse(
+        '{{ result.region_values|escapejs }}'
+    );
+
+
+    const dateLabels = JSON.parse(
+        '{{ result.date_labels|escapejs }}'
+    );
+
+
+    const dateSalesValues = JSON.parse(
+        '{{ result.date_sales_values|escapejs }}'
+    );
+
+
+    const dateProfitValues = JSON.parse(
+        '{{ result.date_profit_values|escapejs }}'
+    );
+
+
+
+    /*
+    ========================================
+    SALES BY PRODUCT
+    ========================================
+    */
+
+
+    const productCanvas =
+        document.getElementById(
+            "productChart"
+        );
+
+
+    if (
+        productCanvas &&
+        productLabels.length > 0
+    ) {
+
+
+        new Chart(
+
+            productCanvas,
+
+            {
+
+                type: "bar",
+
+
+                data: {
+
+                    labels:
+                        productLabels,
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Sales",
+
+
+                            data:
+                                productValues,
+
+
+                            borderWidth:
+                                1
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive:
+                        true,
+
+
+                    maintainAspectRatio:
+                        false,
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero:
+                                true
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+
+    /*
+    ========================================
+    SALES BY REGION
+    ========================================
+    */
+
+
+    const regionCanvas =
+        document.getElementById(
+            "regionChart"
+        );
+
+
+    if (
+        regionCanvas &&
+        regionLabels.length > 0
+    ) {
+
+
+        new Chart(
+
+            regionCanvas,
+
+            {
+
+                type:
+                    "doughnut",
+
+
+                data: {
+
+                    labels:
+                        regionLabels,
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Sales",
+
+
+                            data:
+                                regionValues,
+
+
+                            borderWidth:
+                                1
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive:
+                        true,
+
+
+                    maintainAspectRatio:
+                        false
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+
+    /*
+    ========================================
+    SALES TREND
+    ========================================
+    */
+
+
+    const salesTrendCanvas =
+        document.getElementById(
+            "salesTrendChart"
+        );
+
+
+    if (
+        salesTrendCanvas &&
+        dateLabels.length > 0
+    ) {
+
+
+        new Chart(
+
+            salesTrendCanvas,
+
+            {
+
+                type:
+                    "line",
+
+
+                data: {
+
+                    labels:
+                        dateLabels,
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Sales",
+
+
+                            data:
+                                dateSalesValues,
+
+
+                            tension:
+                                0.3,
+
+
+                            fill:
+                                false,
+
+
+                            borderWidth:
+                                2
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive:
+                        true,
+
+
+                    maintainAspectRatio:
+                        false,
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero:
+                                true
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+
+    /*
+    ========================================
+    PROFIT TREND
+    ========================================
+    */
+
+
+    const profitTrendCanvas =
+        document.getElementById(
+            "profitTrendChart"
+        );
+
+
+    if (
+        profitTrendCanvas &&
+        dateLabels.length > 0
+    ) {
+
+
+        new Chart(
+
+            profitTrendCanvas,
+
+            {
+
+                type:
+                    "line",
+
+
+                data: {
+
+                    labels:
+                        dateLabels,
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Profit",
+
+
+                            data:
+                                dateProfitValues,
+
+
+                            tension:
+                                0.3,
+
+
+                            fill:
+                                false,
+
+
+                            borderWidth:
+                                2
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive:
+                        true,
+
+
+                    maintainAspectRatio:
+                        false,
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero:
+                                true
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+</script>
+
+
+</body>
+
+</html>

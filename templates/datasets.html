@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Dataset Management | AI Business Analytics
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+
+    <h1>
+        AI Business Analytics
+    </h1>
+
+    <p class="subtitle">
+        Dataset Management
+    </p>
+
+
+    <!-- Page Header -->
+
+    <div class="dataset-page-header">
+
+        <div>
+
+            <h2>
+                Your Datasets
+            </h2>
+
+            <p>
+                View and inspect your previously uploaded
+                business datasets.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'upload_dataset' %}"
+            class="primary-link"
+        >
+            + Upload Dataset
+        </a>
+
+    </div>
+
+
+    <!-- Dataset Count -->
+
+    <div class="dataset-summary">
+
+        <strong>
+            {{ datasets|length }}
+        </strong>
+
+        <span>
+            Dataset{{ datasets|length|pluralize }}
+        </span>
+
+    </div>
+
+
+    <!-- Dataset List -->
+
+    {% if datasets %}
+
+        <div class="dataset-list">
+
+            {% for dataset in datasets %}
+
+            <div class="dataset-card">
+
+                <div class="dataset-card-top">
+
+                    <div class="dataset-file">
+
+                        <div class="csv-icon">
+                            CSV
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                {{ dataset.filename }}
+                            </h3>
+
+                            <p>
+                                Dataset ID:
+                                {{ dataset.dataset_id }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if dataset.validation_status == "valid" %}
+
+                    <span class="dataset-valid">
+                        ✓ Valid
+                    </span>
+
+                    {% else %}
+
+                    <span class="dataset-invalid">
+                        ✗ Invalid
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Dataset Stats -->
+
+                <div class="dataset-stats">
+
+                    <div>
+
+                        <span>
+                            Rows
+                        </span>
+
+                        <strong>
+                            {{ dataset.rows }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Columns
+                        </span>
+
+                        <strong>
+                            {{ dataset.columns }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Missing Values
+                        </span>
+
+                        <strong>
+                            {{ dataset.missing_values }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Fields -->
+
+                <div class="dataset-fields">
+
+                    <div>
+
+                        <strong>
+                            Numeric:
+                        </strong>
+
+                        {{ dataset.numeric_fields|join:", " }}
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Categorical:
+                        </strong>
+
+                        {{ dataset.categorical_fields|join:", " }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="dataset-actions">
+
+                    <a
+                        href="{% url 'dataset_preview' dataset.dataset_id %}"
+                    >
+                        Preview Dataset
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- Empty State -->
+
+        <div class="empty-state">
+
+            <h2>
+                No datasets yet
+            </h2>
+
+            <p>
+                Upload your first business dataset
+                to start analyzing your data.
+            </p>
+
+
+            <a
+                href="{% url 'upload_dataset' %}"
+                class="primary-link"
+            >
+                Upload Your First Dataset
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Dataset Validation | AI Business Analytics
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>
+        AI Business Analytics
+    </h1>
+
+    <p class="subtitle">
+        Dataset Validation
+    </p>
+
+
+    <div class="upload-card">
+
+        <!-- STATUS -->
+
+        {% if is_valid %}
+
+        <div class="status-card success">
+
+            <h2>
+                ✓ Dataset Valid
+            </h2>
+
+            <p>
+                Your dataset passed the validation checks
+                and is ready for analytics.
+            </p>
+
+        </div>
+
+        {% else %}
+
+        <div class="status-card danger">
+
+            <h2>
+                ✗ Dataset Invalid
+            </h2>
+
+            <p>
+                Your dataset could not be prepared
+                for analytics.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- DATASET INFORMATION -->
+
+        <div class="status-row">
+
+            <span>
+                Upload Status
+            </span>
+
+            <strong class="success">
+                ✓ Uploaded
+            </strong>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <span>
+                File Name
+            </span>
+
+            <strong>
+                {{ filename }}
+            </strong>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <span>
+                Rows
+            </span>
+
+            <strong>
+                {{ rows }}
+            </strong>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <span>
+                Columns
+            </span>
+
+            <strong>
+                {{ columns }}
+            </strong>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <span>
+                Missing Values
+            </span>
+
+            <strong>
+                {{ missing_values }}
+            </strong>
+
+        </div>
+
+
+        <!-- VALIDATION ERRORS -->
+
+        {% if errors %}
+
+        <div class="validation-error">
+
+            <h3>
+                Validation Problems
+            </h3>
+
+            <ul>
+
+                {% for error in errors %}
+
+                <li>
+                    {{ error }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- WARNINGS -->
+
+        {% if warnings %}
+
+        <div class="validation-warning">
+
+            <h3>
+                Data Quality Warnings
+            </h3>
+
+            <ul>
+
+                {% for warning in warnings %}
+
+                <li>
+                    {{ warning }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- BUSINESS FIELDS -->
+
+        {% if is_valid %}
+
+        <div class="fields-section">
+
+            <h3>
+                Business Fields Detected
+            </h3>
+
+
+            {% if detected_numeric %}
+
+            <p>
+                <strong>
+                    Numeric:
+                </strong>
+
+                {{ detected_numeric|join:", " }}
+
+            </p>
+
+            {% endif %}
+
+
+            {% if detected_categorical %}
+
+            <p>
+                <strong>
+                    Categorical:
+                </strong>
+
+                {{ detected_categorical|join:", " }}
+
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- DATABASE STATUS -->
+
+        <div class="database-status">
+
+            <strong>
+                ✓ Dataset Saved
+            </strong>
+
+            <p>
+                Your validated dataset has been stored
+                in MongoDB and is ready for analytics.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="result-actions">
+
+            <a
+                href="{% url 'upload_dataset' %}"
+            >
+                Upload Another Dataset
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

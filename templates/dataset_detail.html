@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load dataset_filters %}
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Dataset Preview | AI Business Analytics
+    </title>
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <a
+        href="{% url 'dataset_history' %}"
+        class="back-link"
+    >
+        ← Back to Datasets
+    </a>
+
+
+    {% if error %}
+
+        <div class="validation-error">
+
+            <h2>
+                Dataset Not Found
+            </h2>
+
+            <p>
+                {{ error }}
+            </p>
+
+        </div>
+
+    {% else %}
+
+        <!-- Dataset Header -->
+
+        <div class="preview-header">
+
+            <div>
+
+                <p class="small-label">
+                    DATASET PREVIEW
+                </p>
+
+                <h1>
+                    {{ dataset.filename }}
+                </h1>
+
+                <p>
+                    {{ dataset.rows }} rows
+                    ×
+                    {{ dataset.columns }} columns
+                </p>
+
+            </div>
+
+
+            <span class="dataset-valid">
+                ✓ Valid Dataset
+            </span>
+
+        </div>
+
+
+        <!-- Dataset Information -->
+
+        <div class="preview-info">
+
+            <div>
+
+                <span>
+                    Missing Values
+                </span>
+
+                <strong>
+                    {{ dataset.missing_values }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Numeric Fields
+                </span>
+
+                <strong>
+                    {{ dataset.numeric_fields|length }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Categorical Fields
+                </span>
+
+                <strong>
+                    {{ dataset.categorical_fields|length }}
+                </strong>
+
+            </div>
+
+        </div>
+        <a
+            href="{% url 'analytics_dashboard' dataset.dataset_id %}"
+            class="analytics-button">📊 Open Analytics Dashboard</a>
+        <a
+    href="{% url 'ai_business_analyst' dataset.dataset_id %}"
+    class="analytics-button"
+>
+    ✦ Ask AI Analyst
+</a>
+
+
+        <!-- Data Table -->
+
+        <div class="table-card">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h2>
+                        Data Preview
+                    </h2>
+
+                    <p>
+                        Showing the first 10 records
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if records %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            {% for column in columns %}
+
+                            <th>
+                                {{ column }}
+                            </th>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for record in records %}
+
+                        <tr>
+
+                            {% for column in columns %}
+
+                            <td>
+                                {{ record|get_item:column }}
+                            </td>
+
+                            {% endfor %}
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+            <div class="empty-table">
+
+                No records found.
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,277 @@
+```html
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Business Analyst</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="analyst-page">
+
+    <!-- Header -->
+
+    <header class="analyst-header">
+
+        <div>
+            <span class="analyst-label">
+                AI BUSINESS ANALYST
+            </span>
+
+            <h1>
+                Ask questions about your business
+            </h1>
+
+            <p>
+                Get data-driven answers from your uploaded dataset.
+            </p>
+        </div>
+
+        <div class="analyst-actions">
+            <a href="{% url 'analytics_dashboard' dataset_id %}">
+                ← Dashboard
+            </a>
+        </div>
+
+    </header>
+
+    <main class="analyst-main">
+
+        <!-- Question Card -->
+
+        <section class="question-card">
+
+            <div class="ai-icon">
+                ✦
+            </div>
+
+            <div class="question-content">
+
+                <h2>
+                    What would you like to know?
+                </h2>
+
+                <p>
+                    Ask a business question using your dataset.
+                </p>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="question-input">
+
+                        <input
+                            type="text"
+                            name="question"
+                            value="{{ question|default:'' }}"
+                            placeholder="e.g. Which product should I invest in?"
+                            autocomplete="off"
+                            required
+                        >
+
+                        <button type="submit">
+                            Analyze with AI →
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- Suggested Questions -->
+
+        <section class="suggestions">
+
+            <h3>
+                Try asking
+            </h3>
+
+            <div class="suggestion-grid">
+
+                <button
+                    type="button"
+                    onclick="askQuestion('Which product is performing best?')">
+                    📈 Best product
+                </button>
+
+                <button
+                    type="button"
+                    onclick="askQuestion('Which product should I invest in?')">
+                    💰 Investment opportunity
+                </button>
+
+                <button
+                    type="button"
+                    onclick="askQuestion('Which region is strongest?')">
+                    🌍 Best region
+                </button>
+
+                <button
+                    type="button"
+                    onclick="askQuestion('How can I improve profit?')">
+                    💡 Improve profit
+                </button>
+
+                <button
+                    type="button"
+                    onclick="askQuestion('Why are sales decreasing?')">
+                    📉 Sales decline
+                </button>
+
+                <button
+                    type="button"
+                    onclick="askQuestion('Which products are performing poorly?')">
+                    ⚠ Weak products
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- Analyst Answer -->
+
+        {% if answer %}
+
+        <section class="answer-card">
+
+            <div class="answer-header">
+
+                <div>
+
+                    <span>
+                        ANALYST RESPONSE
+                    </span>
+
+                    <h2>
+                        Business Insight
+                    </h2>
+
+                </div>
+
+                <div class="answer-status">
+
+                    {% if answer.success %}
+                        ✓ AI Analysis Complete
+                    {% else %}
+                        AI Analysis Unavailable
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Answer Content -->
+
+            <div class="answer-body">
+
+                <div class="llm-response">
+
+                    {{ answer.answer|default:"No answer was returned."|linebreaks }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Supporting Metrics -->
+
+            {% if answer.success %}
+
+            <div class="answer-metrics">
+
+                {% if answer.metric_title or answer.metric_value %}
+
+                <div>
+
+                    <span>
+                        Key Metric
+                    </span>
+
+                    <strong>
+                        {{ answer.metric_title|default:"N/A" }}
+                    </strong>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Result
+                    </span>
+
+                    <strong>
+                        {{ answer.metric_value|default:"N/A" }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+                {% if answer.supporting_text %}
+
+                <div>
+
+                    <span>
+                        Supporting Data
+                    </span>
+
+                    <strong>
+                        {{ answer.supporting_text }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+
+    </main>
+
+</div>
+
+
+<script>
+
+function askQuestion(question) {
+
+    const input = document.querySelector(
+        'input[name="question"]'
+    );
+
+    if (input) {
+        input.value = question;
+        input.focus();
+    }
+
+}
+
+</script>
+
+</body>
+</html>
+```
